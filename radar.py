@@ -8,6 +8,7 @@ Screen = [['' for x in range(Y_SIZE)] for y in range(X_SIZE)]
 
 
 def print_screen():
+    global Screen
     # str_format = "{:" + str(X_SIZE - 1) + "}"
     str_format = "{:" + "1" + "}"
     print('\n'.join([''.join([str_format.format(item) for item in row])
@@ -18,46 +19,18 @@ def print_screen():
         print("\033c", end="")
 
 
-def gen_borders():
-    for i in range(X_SIZE):
-        for j in range(Y_SIZE):
-            Screen[i][j] = ''
+def gen_borders(clear_screen=False):
+    global Screen
     for i in range(X_SIZE):
         Screen[i][0] = Screen[i][Y_SIZE - 1] = '#'
 
     for j in range(Y_SIZE):
         Screen[0][j] = Screen[X_SIZE - 1][j] = '#'
 
-
-def fill_cursor():
-    center_x = X_SIZE // 2
-    center_y = Y_SIZE // 2
-    # check if there are more '+' es to be added  to the cursor
-    # vertical axis
-    for i in range(center_x - 1, 1, -1):
-        if Screen[i][center_y - 1] == '+':
-            for j in range(i + 1, center_x, 1):
-                Screen[j][center_y - 1] = '+'
-            return
-
-    for i in range(center_x - 1, X_SIZE - 1, 1):
-        if Screen[i][center_y - 1] == '+':
-            for j in range(i - 1, center_x, -1):
-                Screen[j][center_y - 1] = '+'
-            return
-
-    # horizontal axis
-    for j in range(center_y - 1, 1, -1):
-        if Screen[center_x - 1][j] == '+':
-            for i in range(j + 1, center_y, 1):
-                Screen[center_x - 1][i] = '+'
-            return
-
-    for j in range(center_y - 1, Y_SIZE - 1, 1):
-        if Screen[center_x - 1][j] == '+':
-            for i in range(j - 1, center_y, 1):
-                Screen[center_x - 1][i] = '+'
-            return
+    if clear_screen is True:
+        for i in range(1, X_SIZE - 1, 1):
+            for j in range(1, Y_SIZE - 1, 1):
+                Screen[i][j] = ''
 
 # def ascii_radar():
 #     turn = Y_SIZE // 2
@@ -87,18 +60,26 @@ def fill_cursor():
 
 
 def print_screen_re(quad1_swipe):
+    gen_borders()
     # remove dupes
     for i in range(0, len(quad1_swipe) - 1, 1):
         if quad1_swipe[i] == quad1_swipe[i + 1]:
             quad1_swipe[i] = []
 
     quad1_swipe = [turn for turn in quad1_swipe if turn != []]
+    prev_turn = []
 
     for turn in quad1_swipe:
-        gen_borders()
+        if len(prev_turn) > 0:
+            for step in prev_turn:
+                Screen[step[0]][step[1]] = ""
+
         for step in turn:
             Screen[step[0]][step[1]] = "+"
+        prev_turn = turn.copy()
         print_screen()
+
+    gen_borders(True)
 
 
 def ascii_radar_re():
@@ -147,10 +128,10 @@ def ascii_radar_re():
             # if (center_x - 1 - b) % (center_y - 1) >= 0.5:
             #     a = int(round(a + 1))
 
-        print("A(", j, ",", 1, ")")
-        print("B(", center_y - 1, ",", center_x - 1, ")")
-        print("b = ", b)
-        print("a = ", a)
+        # print("A(", j, ",", 1, ")")
+        # print("B(", center_y - 1, ",", center_x - 1, ")")
+        # print("b = ", b)
+        # print("a = ", a)
 
         valid_slope = False
         increased_slope = False
@@ -336,9 +317,7 @@ def print_list(l):
     # print('---------------------')
 
 ascii_radar_re()
-# split_arr_test()
-gen_borders()
-print_screen()
+
 
 
 
