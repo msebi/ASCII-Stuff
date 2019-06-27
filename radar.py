@@ -1,10 +1,14 @@
 from time import sleep
+from random import randint
 import subprocess
 import platform
 
 
 X_SIZE, Y_SIZE = 28, 28
 Screen = [['' for x in range(Y_SIZE)] for y in range(X_SIZE)]
+bogey_pos = []
+MIN_NR_BOGEYS = 1
+MAX_NR_BOGEYS = 10
 
 
 def print_screen():
@@ -31,6 +35,27 @@ def gen_borders(clear_screen=False):
         for i in range(1, X_SIZE - 1, 1):
             for j in range(1, Y_SIZE - 1, 1):
                 Screen[i][j] = ''
+
+
+def add_bogey(min_nr_bogeys=MIN_NR_BOGEYS, max_nr_bogeys=MAX_NR_BOGEYS):
+    nr_bogeys = randint(min_nr_bogeys, max_nr_bogeys)
+    k = 1
+
+    while k <= nr_bogeys:
+        x_bogey = randint(2, X_SIZE - 1)
+        y_bogey = randint(2, Y_SIZE - 1)
+        found = False
+
+        for coord in bogey_pos:
+            if coord == [x_bogey, y_bogey]:
+                found = True
+                break
+        if found:
+            continue
+
+        bogey_pos.append([x_bogey, y_bogey])
+        k = k + 1
+
 
 # def ascii_radar():
 #     turn = Y_SIZE // 2
